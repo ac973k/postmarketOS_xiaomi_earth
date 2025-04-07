@@ -1,0 +1,90 @@
+# Reference: <https://postmarketos.org/vendorkernel>
+# Kernel config based on: arch/arm64/configs/earth_defconfig
+# Maintainer: Daniil Terentev <daniil@terentyeff.ru>
+
+pkgname=linux-xiaomi-earth
+pkgver=4.19.325
+pkgrel=0
+pkgdesc="Xiaomi Redmi 12C kernel fork"
+arch="aarch64"
+_carch="arm64"
+_flavor="xiaomi-earth"
+url="https://kernel.org"
+license="GPL-2.0-only"
+options="!strip !check !tracedeps pmb:cross-native"
+makedepends="
+	android-tools
+	bash
+	bc
+	bison
+	devicepkg-dev
+	findutils
+	flex
+	openssl-dev
+	perl
+	libselinux-dev
+	linux-headers
+    	musl-dev
+    	ncurses-dev
+	cpio
+	coreutils
+	xz
+	dtc
+	clang
+"
+
+export CC="clang"
+export HOSTCC="clang"
+
+# Source
+_repository="Xiaomi_Kernel_OpenSource"
+_commit="42825e29c289447816d10d53f07220ba2833b39d"
+_config="config-$_flavor.$arch"
+source="
+	$pkgname-$_commit.tar.gz::https://github.com/MiCode/$_repository/archive/$_commit.tar.gz
+	$_config
+	fix_kernel_genheaders.patch
+	fix-broken-inline-functions.patch
+	add-mt6768-dtb.patch
+"
+builddir="$srcdir/$_repository-$_commit"
+_outdir="out"
+
+prepare() {
+	default_prepare
+	REPLACE_GCCH=0 . downstreamkernel_prepare
+}
+
+build() {
+	unset LDFLAGS
+	make -j4 O="$_outdir" ARCH="$_carch" CC="${CC:-gcc}" \
+		KBUILD_BUILD_VERSION="$((pkgrel + 1 ))-postmarketOS"
+}
+
+package() {
+	if [ -f "$_outdir"/arch/arm64/boot/Image ]; then
+		rm "$_outdir"/arch/arm64/boot/Image
+	fi
+
+	mv "$_outdir"/arch/arm64/boot/Image.gz "$_outdir"/arch/arm64/boot/Image
+
+	downstreamkernel_package "$builddir" "$pkgdir" "$_carch" \
+		"$_flavor" "$_outdir"
+
+	make dtbs_install O="$_outdir" ARCH="$_carch" \
+		INSTALL_DTBS_PATH="$pkgdir"/boot/dtbs
+
+	# We also need to convert the kernel DTB into a proper android dtb image with the 64-byte header
+	mv "$pkgdir"/boot/dtbs/mediatek/mt6768.dtb "$pkgdir"/boot/dtbs/mediatek/mt6768.dtb.bak
+	mkdtboimg create "$pkgdir"/boot/dtbs/mediatek/mt6768.dtb "$pkgdir"/boot/dtbs/mediatek/mt6768.dtb.bak
+	rm "$pkgdir"/boot/dtbs/mediatek/mt6768.dtb.bak
+
+}
+
+sha512sums="
+2feef6b9275a5180067328716f7fc86cede62d8e5c0768951c044e967d0268276470a78be6acd0c29b895a84f6d6acd03f1f0b20fa65dd65ae76af61346af7a8  linux-xiaomi-earth-42825e29c289447816d10d53f07220ba2833b39d.tar.gz
+841c9c172055f064a661546e32c7164d160bcb7ba863ad85b127bb02791963c9f9e19ad221143c7dd73e2d6dfd430cd453cd585a0a99d3e5faef6492cd3dffdd  config-xiaomi-earth.aarch64
+89a8190b85f8194e1f9aef04b303bc20e159102c50fe11f7824150ac6474be5141487f1f224c890e6e9ecc1d9e777ad9fbd7b2bd2942453b5f84dba385fe04b6  fix_kernel_genheaders.patch
+7c0a660d69521b95369788b455f9fbb374f1e2757db235bd1dcb42b61d79e73c25c33d0303000eeb229bb87d702af0aaab7a3189546b0890f65007afceb3499d  fix-broken-inline-functions.patch
+aba8e2910cf0927ba60477c52b6d09816a1a6bbd53a665e02a2ad99044d9d7ec6f11347491210aabda22fbfd3b71f4669c2ca8681393d74b83692597a6a22f98  add-mt6768-dtb.patch
+"
