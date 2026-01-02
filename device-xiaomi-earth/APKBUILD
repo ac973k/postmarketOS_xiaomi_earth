@@ -12,9 +12,8 @@ depends="
 	linux-xiaomi-earth
 	mkbootimg
 	postmarketos-base
-	postmarketos-base-ui
-	tinydm
 	linux-firmware-mediatek
+	firmware-xiaomi-earth
 "
 makedepends="devicepkg-dev"
 source="
@@ -26,9 +25,12 @@ build() {
 }
 
 package() {
+	install -d "$pkgdir"/boot/dtbo
+	cp "$builddir"/arch/arm64/boot/dts/mediatek/earth.dtbo "$pkgdir"/boot/dtbo/
+
 	devicepkg_package $startdir $pkgname
 }
 
 sha512sums="
-2bffe5bd06e447687356b50b845d63b8657a114a6924bc16e437a8c4058655b595075cafeb72fc3800aca14eed393aa2c864ce98408931cd88c52fe6afbf4b08  deviceinfo
+ef19af5edd66555b5ccf4c079674e8741868197e4d2efc170d97dd96c1b9bdf7d16afab8781eb13a19ba528905ee2ad28b27839026d9f6214702fd0121dd1987  deviceinfo
 "
