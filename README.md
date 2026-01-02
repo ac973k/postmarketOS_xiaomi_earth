@@ -24,7 +24,7 @@ pmbootstrap flasher --method=fastboot export
 
 ## How to flash
 
-## with pmbootstrap
+### with pmbootstrap
 
 adb reboot bootloader
 
@@ -34,7 +34,7 @@ pmbootstrap flasher --method=fastboot flash_kernel
 pmbootstrap flasher --method=fastboot flash_rootfs
 
 
-## with fastboot
+### with fastboot
 
 adb reboot bootloader
 
