@@ -25,12 +25,9 @@ build() {
 }
 
 package() {
-	install -d "$pkgdir"/boot/dtbo
-	cp "$builddir"/arch/arm64/boot/dts/mediatek/earth.dtbo "$pkgdir"/boot/dtbo/
-
 	devicepkg_package $startdir $pkgname
 }
 
 sha512sums="
-ef19af5edd66555b5ccf4c079674e8741868197e4d2efc170d97dd96c1b9bdf7d16afab8781eb13a19ba528905ee2ad28b27839026d9f6214702fd0121dd1987  deviceinfo
+321344cf4aacc30787c4231ddccecea990905b08437fb82521b6fd11366a247dbc609453429a398394183f07694528504188da741ee93df5d44b144446eb7d33  deviceinfo
 "

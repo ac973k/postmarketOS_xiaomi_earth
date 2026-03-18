@@ -1,0 +1,16 @@
+Fix build with GCC 15 - inline functions with variable arguments
+GCC 15 correctly rejects inline functions with varargs
+
+diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+index 1234567890ab..abcdef123456 100644
+--- a/kernel/trace/bpf_trace.c
++++ b/kernel/trace/bpf_trace.c
+@@ -360,7 +360,7 @@ static const struct bpf_func_proto bpf_probe_read_str_proto = {
+ 	.arg_type      = { ARG_PTR_TO_UNINIT_MEM, ARG_CONST_SIZE, ARG_PTR_TO_MEM },
+ };
+ 
+-static inline __printf(1, 0) int bpf_do_trace_printk(const char *fmt, ...)
++static __printf(1, 0) int bpf_do_trace_printk(const char *fmt, ...)
+ {
+ 	static char buf[BPF_TRACE_PRINTK_SIZE];
+ 	unsigned long flags;
