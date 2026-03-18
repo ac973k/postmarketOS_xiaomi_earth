@@ -1,0 +1,20 @@
+Fix firmware path for postmarketOS compatibility
+
+The default Android kernel uses /vendor/firmware, but postmarketOS
+stores firmware in /lib/firmware. This patch changes the default
+firmware_class.path to /lib/firmware.
+
+diff --git a/arch/arm64/boot/dts/mediatek/mt6768.dts b/arch/arm64/boot/dts/mediatek/mt6768.dts
+index 1234567890ab..abcdef123456 100644
+--- a/arch/arm64/boot/dts/mediatek/mt6768.dts
++++ b/arch/arm64/boot/dts/mediatek/mt6768.dts
+@@ -33,7 +33,7 @@
+ 	chosen: chosen {
+ 		bootargs = "console=tty0 console=ttyS0,921600n1 root=/dev/ram \
+ vmalloc=400M slub_debug=OFZPU swiotlb=noforce \
+ cgroup.memory=nosocket,nokmem \
+-firmware_class.path=/vendor/firmware \
++firmware_class.path=/lib/firmware \
+ page_owner=on loop.max_part=7";
+ 		kaslr-seed = <0 0>;
+ 	};
