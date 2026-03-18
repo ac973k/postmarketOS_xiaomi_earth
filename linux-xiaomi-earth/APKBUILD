@@ -62,6 +62,9 @@ package() {
 	downstreamkernel_package "$builddir" "$pkgdir" "$_carch" \
 		"$_flavor" "$_outdir"
 
+	# Install main DTB file manually (avoid overlay issues)
+	install -Dm644 "$_outdir"/arch/arm64/boot/dts/mediatek/mt6768.dtb \
+		"$pkgdir"/boot/dtbs/mediatek/mt6768.dtb
 }
 
 sha512sums="
