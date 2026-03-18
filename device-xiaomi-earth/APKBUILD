@@ -12,7 +12,8 @@ depends="
 	linux-xiaomi-earth
 	mkbootimg
 	postmarketos-base
-	msm-fb-refresher
+	linux-firmware-mediatek
+	firmware-xiaomi-earth
 "
 makedepends="devicepkg-dev"
 source="
@@ -28,5 +29,5 @@ package() {
 }
 
 sha512sums="
-1d1ded37a42ed300377848344788f0b3835e151a4500f9fbbd584272846fab0c27d37eb08058a2febf9cf5f6ea49f68ae10a0c76d94cb29e41e6ae7a163d704a  deviceinfo
+321344cf4aacc30787c4231ddccecea990905b08437fb82521b6fd11366a247dbc609453429a398394183f07694528504188da741ee93df5d44b144446eb7d33  deviceinfo
 "
